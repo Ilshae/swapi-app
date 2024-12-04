@@ -8,7 +8,11 @@ export class SwapiService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async fetchResource(resource: string, page = 1, filter?: string): Promise<any[]> {
+  async fetchResource(
+    resource: string,
+    page = 1,
+    filter?: string,
+  ): Promise<any[]> {
     const url = `${this.baseUrl}/${resource}/?page=${page}`;
     const response = await firstValueFrom(this.httpService.get(url));
     let results = response.data.results;
@@ -16,11 +20,19 @@ export class SwapiService {
     if (filter) {
       results = results.filter((item) =>
         Object.values(item).some(
-          (value) => typeof value === 'string' && value.toLowerCase().includes(filter.toLowerCase())
-        )
+          (value) =>
+            typeof value === 'string' &&
+            value.toLowerCase().includes(filter.toLowerCase()),
+        ),
       );
     }
 
     return results;
+  }
+
+  async fetchResourceById(resource: string, id: number): Promise<any> {
+    const url = `${this.baseUrl}/${resource}/${id}`;
+    const response = await firstValueFrom(this.httpService.get(url));
+    return response.data;
   }
 }
