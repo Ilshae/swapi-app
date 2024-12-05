@@ -44,7 +44,10 @@ module.exports = {
       },
     ],
     'no-console': 'warn',
-    '@typescript-eslint/no-unused-vars': ['error'],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    ],
     '@typescript-eslint/explicit-function-return-type': ['warn'],
     '@typescript-eslint/no-explicit-any': 'off',
   },
