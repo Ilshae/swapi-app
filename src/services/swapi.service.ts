@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
@@ -7,6 +7,7 @@ import { CacheService } from './cache.service';
 @Injectable()
 export class SwapiService {
   private readonly baseUrl = 'https://swapi.dev/api';
+  private readonly logger = new Logger(SwapiService.name);
 
   constructor(
     private readonly httpService: HttpService,
@@ -19,7 +20,15 @@ export class SwapiService {
     filter?: string,
   ): Promise<any[]> {
     const cacheKey = `${resource}-page-${page}-${filter || 'all'}`;
-    const cachedData = await this.cacheService.get<any[]>(cacheKey);
+
+    let cachedData: any[] | null = null;
+    try {
+      cachedData = await this.cacheService.get<any[]>(cacheKey);
+    } catch (error) {
+      this.logger.warn(
+        `Cache get failed for key ${cacheKey}: ${error.message}`,
+      );
+    }
 
     if (cachedData) {
       return cachedData;
@@ -39,7 +48,13 @@ export class SwapiService {
       );
     }
 
-    await this.cacheService.set(cacheKey, results);
+    try {
+      await this.cacheService.set(cacheKey, results);
+    } catch (error) {
+      this.logger.warn(
+        `Cache set failed for key ${cacheKey}: ${error.message}`,
+      );
+    }
 
     return results;
   }
