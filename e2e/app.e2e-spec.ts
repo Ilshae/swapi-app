@@ -3,14 +3,23 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 
 import { SwapiModule } from '../src/modules/swapi.module';
+import { CacheService } from '../src/services/cache.service';
 
 describe('App E2E Tests', () => {
   let app: INestApplication;
+  let mockCacheService: Record<string, jest.Mock>;
 
   beforeAll(async () => {
+    mockCacheService = {
+      get: jest.fn().mockResolvedValue(null),
+      set: jest.fn().mockResolvedValue(undefined),
+    };
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [SwapiModule],
-    }).compile();
+    })
+      .overrideProvider(CacheService)
+      .useValue(mockCacheService)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
