@@ -81,3 +81,12 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## Run the app with Docker Compose
+Run the following command to build and start the application along with Redis:
+```
+docker-compose up --build
+```
+
+This command will:
+- build the Docker images for the application and Redis.
+- start the containers as defined in the docker-compose.yml file.
