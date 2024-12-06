@@ -51,3 +51,23 @@ export class Planet {
   @Field()
   terrain: string;
 }
+
+@ObjectType()
+export class OpeningCrawlAnalysis {
+  @Field(() => [WordCount], {
+    description: 'List of unique words and their counts',
+  })
+  wordCounts: WordCount[];
+
+  @Field(() => [String], { description: 'Most mentioned character names' })
+  mostMentionedCharacters: string[];
+}
+
+@ObjectType()
+export class WordCount {
+  @Field()
+  word: string;
+
+  @Field()
+  count: number;
+}
