@@ -25,21 +25,8 @@ describe('App E2E Tests', () => {
       .get('/')
       .expect(200)
       .expect(
-        'Welcome to the Star Wars API! Visit /graphql to interact with the API. \n' +
-          'In order to access crawl analysis go to: http://localhost:3000/opening-crawl-analysis',
+        'Welcome to the Star Wars API! Visit /graphql to interact with the API.',
       );
-  });
-
-  it('/opening-crawl-analysis (GET)', async () => {
-    jest.setTimeout(15000);
-
-    const response = await request(app.getHttpServer())
-      .get('/opening-crawl-analysis')
-      .expect(200);
-
-    expect(response.body).toHaveProperty('result');
-    expect(response.body.result[0]).toHaveProperty('A');
-    expect(response.body.result[0]).toHaveProperty('B');
   });
 
   it('should fetch films via GraphQL', async () => {
@@ -62,5 +49,30 @@ describe('App E2E Tests', () => {
     expect(response.body.data.films.length).toBeGreaterThan(0);
     expect(response.body.data.films[0]).toHaveProperty('title');
     expect(response.body.data.films[0]).toHaveProperty('director');
+  });
+
+  it('should fetch crawl analysis', async () => {
+    const query = `
+      query {
+        openingCrawlAnalysis {
+          wordCounts {
+            word
+            count
+          }
+          mostMentionedCharacters
+        }
+      }
+    `;
+
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .send({ query })
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.data.openingCrawlAnalysis.wordCounts).toBeDefined();
+    expect(
+      response.body.data.openingCrawlAnalysis.mostMentionedCharacters,
+    ).toBeDefined();
   });
 });
