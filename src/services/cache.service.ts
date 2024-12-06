@@ -4,7 +4,7 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import Redis from 'ioredis';
+import Redis, { RedisOptions } from 'ioredis';
 
 @Injectable()
 export class CacheService implements OnModuleInit, OnModuleDestroy {
@@ -25,10 +25,10 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
         this.logger.error('Redis connection error:', err);
         return true;
       },
-    });
+    } as RedisOptions);
   }
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     this.client.on('connect', () => {
       this.logger.log('Connected to Redis');
     });
@@ -38,7 +38,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  async onModuleDestroy() {
+  async onModuleDestroy(): Promise<void> {
     await this.client.quit();
     this.logger.log('Disconnected from Redis');
   }
