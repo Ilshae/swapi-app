@@ -1,0 +1,6 @@
+introspection:
+  url: http://localhost:3000/graphql
+info:
+  title: Star Wars API Documentation
+  description: |
+    This documentation provides an overview of the Star Wars API, its queries, and mutations.
